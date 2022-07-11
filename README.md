@@ -1,3 +1,0 @@
-# xFrak Database
-
-## 
