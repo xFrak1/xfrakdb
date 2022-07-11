@@ -13,7 +13,7 @@ export default class Database {
      * @description The content of the database
      */
     protected content: object;
-    constructor({ path, indent }: { path: string, indent?: number });
+    constructor(options: { path: string, indent?: number });
 
     /**
      * @description Load the data from the database
@@ -100,4 +100,4 @@ export default class Database {
      * @returns The values of the database
      */
     public values(): any[];
-} 
+}

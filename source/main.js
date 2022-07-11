@@ -1,38 +1,39 @@
 const fs = require("fs");
 
 /**
- * @typedef {{ path: string, indent: number }} dboptions
+ * @typedef {{ path: string, indent?: number }} DatabaseOptions
  */
 module.exports = class Database {
     /**
      * @protected
-     * @type {dboptions["path"]}
+     * @type {DatabaseOptions["path"]}
      * The path of the file where the database will be saved
      */
     path = this.path;
 
     /**
      * @protected
-     * @type {dboptions["indent"]}
+     * @type {DatabaseOptions["indent"]}
      * The indentation of the JSON files
      */
     indent = this.indent;
 
     /**
-     * @param {dboptions} options
+     * @param {DatabaseOptions} options
      */
     constructor(options) {
-        this.path = options.path;
-        this.indent = options.indent || 4;
-        this.load();
-
-        if(!options.path || typeof(options.path) !== "string") {
+        if(!options.path || typeof options.path !== "string") {
             throw new TypeError("Path invalid, must be a json file");
         };
 
-        if(typeof(options.indent) !== "number") {
+        
+        if(options.indent && typeof options.indent !== "number") {
             throw new TypeError("Invalid indent, error in the constructor");
         };
+
+        this.path = options.path;
+        this.indent = options?.indent || 4;
+        this.load();
     };
 
     /**
@@ -100,6 +101,15 @@ module.exports = class Database {
     };
 
     /**
+     * @description Filter the data in the database
+     * @param {(value: any) => any | any[]} callback The callback function to filter the data
+     */
+    filter(callback) {
+        this.load();
+        return Object.values(this.content).filter(callback);
+    };
+
+    /**
      * @description Get the value of a specific data in the database
      * @param {string} key The key of the data to get
      * @returns {any} The value of the data
@@ -117,6 +127,17 @@ module.exports = class Database {
     has(key) {
         this.load();
         return this.content.hasOwnProperty(key);
+    };
+
+    /**
+     * @description Check if the data exists in the key
+     * @param {string} key The data key you want to find if you include
+     * @param {string} value The data value you want to find if you include
+     * @returns {boolean} True if the data exists, false otherwise
+     */
+    includes(key, value) {
+        this.load();
+        return this.content[key].includes(value);
     };
 
     /**
@@ -179,15 +200,6 @@ module.exports = class Database {
         this.load();
         this.content[key] = value;
         this.save();
-    };
-
-    /**
-     * @description The size of the database
-     * @returns {number} The size of the database
-     */
-    size() {
-        this.load();
-        return Object.keys(this.content).length;
     };
 
     /**

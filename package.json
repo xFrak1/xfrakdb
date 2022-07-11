@@ -1,8 +1,9 @@
 {
     "name": "xfrakdb",
-    "version": "10.0.1",
+    "version": "10.0.2",
     "description": "Base de de datos fácil de usar, con una interfaz simple.",
     "main": "./source/main.js",
+    "types" : "/source/typings/main.d.ts",
     "keywords": ["database", "json", "jsondb", "db"],
     "author": "xFrak1",
     "license": "MIT",
@@ -13,5 +14,9 @@
     "bugs": {
         "url": "https://github.com/xFrak1/xfrakdb/issues"
     },
-    "homepage": "https://github.com/xFrak1/xfrakdb/"
+    "homepage": "https://github.com/xFrak1/xfrakdb/",
+    "scripts": {
+        "test": "node source/tests/test.js",
+        "start": "node source/main.js"
+    }
 }
