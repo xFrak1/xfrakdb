@@ -7,14 +7,14 @@ module.exports = class Database {
     /**
      * @protected
      * @type {DatabaseOptions["path"]}
-     * The path of the file where the database will be saved
+     * @description The path of the file where the database will be saved
      */
     path = this.path;
 
     /**
      * @protected
      * @type {DatabaseOptions["indent"]}
-     * The indentation of the JSON files
+     * @description The indentation of the JSON files
      */
     indent = this.indent;
 
@@ -42,7 +42,9 @@ module.exports = class Database {
      */
     load() {
         /**
-         * @protected
+         * @protected 
+         * @type {object}
+         * @description The data set in the database
          */
         this.content = JSON.parse(fs.readFileSync(this.path).toString());
     };
@@ -93,7 +95,7 @@ module.exports = class Database {
 
     /**
      * @description Gets all entries from the database
-     * @returns {[string, value][]} The entries of the database
+     * @returns {[ string, value ][]} The entries of the database
      */
     entries() {
         this.load();
@@ -137,7 +139,7 @@ module.exports = class Database {
      */
     includes(key, value) {
         this.load();
-        return this.content[key].includes(value);
+        return Object.values(this.content[key]).includes(value);
     };
 
     /**
@@ -157,17 +159,15 @@ module.exports = class Database {
     pull(key, value) {
         this.load();
 
-        try {
+        if(typeof(this.content[key] || value) !== "object") {
             if(Array.isArray(value)) {
-                this.content[key] = this.content[key].filter((v) => !value.includes(v));
+                this.content[key] = this.content[key].filter(item => !value.includes(item));
             } else {
-                this.content[key] = this.content[key].filter((v) => v !== value);
+                this.content[key] = this.content[key].filter(item => item !== value);
             };
-        } catch(error) {
-            throw new TypeError(error.message);
+            
+            this.save();
         };
-        
-        this.save();
     };
 
     /**
