@@ -1,9 +1,9 @@
 {
     "name": "xfrakdb",
-    "version": "9.1.0",
+    "version": "9.1.1",
     "description": "Base de de datos fácil de usar, con una interfaz simple.",
-    "main": "./main.js",
-    "types": "./main.d.ts",
+    "main": "index.js",
+    "typings": "./index.d.ts",
     "repository": "git+https://github.com/xFrak1/xfrakdb.git",
     "keywords": ["database", "json", "jsondb", "db"],
     "author": "xFrak1",
