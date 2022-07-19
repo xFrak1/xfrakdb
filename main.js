@@ -1,4 +1,4 @@
-const fs = require("fs");
+const { writeFileSync, readFileSync } = require("fs");
 
 /**
  * @typedef {{ path: string, indent?: number }} DatabaseOptions
@@ -15,7 +15,7 @@ module.exports = class Database {
      * @protected
      * @type {DatabaseOptions["indent"]}
      * @description The indentation of the JSON files
-     */
+     */ 
     indent = this.indent;
 
     /**
@@ -42,11 +42,11 @@ module.exports = class Database {
      */
     load() {
         /**
-         * @protected 
+         * @protected
          * @type {object}
          * @description The data set in the database
          */
-        this.content = JSON.parse(fs.readFileSync(this.path).toString());
+        this.content = JSON.parse(readFileSync(this.path).toString());
     };
 
     /**
@@ -62,7 +62,7 @@ module.exports = class Database {
             throw error;
         };
 
-        fs.writeFileSync(this.path, jsondata, "utf-8");
+        writeFileSync(this.path, jsondata, "utf-8");
     };
 
     /**
@@ -104,7 +104,8 @@ module.exports = class Database {
 
     /**
      * @description Filter the data in the database
-     * @param {(value: any) => any | any[]} callback The callback function to filter the data
+     * @param {(value: any) => any} callback The callback function to filter the data
+     * @returns {any} The filtered data
      */
     filter(callback) {
         this.load();
@@ -152,22 +153,16 @@ module.exports = class Database {
     };
 
     /**
-     * @description Delete a specific data in the database
+     * @description Delete a specific data in the database (Not working in database arrays)
      * @param {string} key The key of the data to delete
-     * @param {any | any[]} value The value of the data to delete
+     * @param {any} value The value of the data to delete
      */
     pull(key, value) {
         this.load();
+        if(!Array.isArray(this.content[key])) this.content[key] = [];
 
-        if(typeof(this.content[key] || value) !== "object") {
-            if(Array.isArray(value)) {
-                this.content[key] = this.content[key].filter(item => !value.includes(item));
-            } else {
-                this.content[key] = this.content[key].filter(item => item !== value);
-            };
-            
-            this.save();
-        };
+        this.content[key] = this.content[key].filter(item => item !== value);
+        this.save();
     };
 
     /**
@@ -177,17 +172,9 @@ module.exports = class Database {
      */
     push(key, value) {
         this.load();
+        if(!Array.isArray(this.content[key])) this.content[key] = [];
 
-        try {
-            if(Array.isArray(value)) {
-                this.content[key] = this.content[key].concat(value);
-            } else {
-                this.content[key].push(value);
-            };
-        } catch(error) {
-            throw new TypeError(error.message);
-        }
-        
+        this.content[key].push(value);
         this.save();
     };
 
@@ -199,6 +186,18 @@ module.exports = class Database {
     set(key, value) {
         this.load();
         this.content[key] = value;
+        this.save();
+    };
+
+    /**
+     * @description Remove all duplications values from the key (Not working in database arrays)
+     * @param {string} key The key of the data to remove duplications
+     */
+    unique(key) {
+        this.load();
+        if(!Array.isArray(this.content[key])) this.content[key] = [];
+
+        this.content[key] = [...new Set(this.content[key])];
         this.save();
     };
 
