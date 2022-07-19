@@ -1,6 +1,6 @@
 {
     "name": "xfrakdb",
-    "version": "9.0.0",
+    "version": "9.1.0",
     "description": "Base de de datos fácil de usar, con una interfaz simple.",
     "main": "./main.js",
     "types": "./main.d.ts",
